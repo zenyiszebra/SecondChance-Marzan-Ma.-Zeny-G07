@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header card-header-sc d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">My Profile</h5>
+        <a class="btn btn-sm btn-sc" href="{% url 'accounts:profile_edit' %}">Edit profile</a>
+      </div>
+      <div class="card-body">
+        <div class="text-center mb-3">
+          {% if user.profile_photo %}
+            <img src="{{ user.profile_photo.url }}" alt="Profile photo" class="rounded-circle" style="width:120px;height:120px;object-fit:cover;">
+          {% else %}
+            <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center text-white fs-1" style="width:120px;height:120px;">{{ user.username|slice:":1"|upper }}</div>
+          {% endif %}
+        </div>
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Username</dt><dd class="col-sm-8">{{ user.username }}</dd>
+          <dt class="col-sm-4">Name</dt><dd class="col-sm-8">{{ user.get_full_name|default:"-" }}</dd>
+          <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ user.email }}</dd>
+          <dt class="col-sm-4">Contact</dt><dd class="col-sm-8">{{ user.contact_number|default:"-" }}</dd>
+          <dt class="col-sm-4">Role</dt><dd class="col-sm-8">{{ user.get_role_display }}</dd>
+          <dt class="col-sm-4">Joined</dt><dd class="col-sm-8">{{ user.date_joined|date:"F d, Y" }}</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

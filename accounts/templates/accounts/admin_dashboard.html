@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ total_users }}</div><div class="text-muted">Total users</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ admin_count }}</div><div class="text-muted">Admins</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ staff_count }}</div><div class="text-muted">Staff</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ reviewer_count }}</div><div class="text-muted">Reviewers</div></div></div></div>
+</div>
+<div class="card shadow-sm">
+  <div class="card-header card-header-sc d-flex justify-content-between align-items-center">
+    <span>Recent registrations</span>
+    <a class="btn btn-sm btn-sc" href="{% url 'admin:accounts_user_changelist' %}">Manage users</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>
+        {% for u in recent_users %}
+          <tr><td>{{ u.username }}</td><td>{{ u.get_full_name|default:"-" }}</td><td>{{ u.email }}</td><td>{{ u.get_role_display }}</td><td>{{ u.date_joined|date:"M d, Y" }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
