@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="p-5 mb-4 bg-white rounded-3 shadow-sm">
+  <h1 class="display-5 fw-bold">SecondChance: Breaking Beyond the Bars</h1>
+  <p class="fs-5 text-muted">
+    A rehabilitation progress tracking system. Correctional staff record each inmate's progress
+    through six rehabilitation stages, and the system turns it into a measurable Readiness Score
+    for release-preparation decisions.
+  </p>
+  <a class="btn btn-sc btn-lg me-2" href="{% url 'accounts:login' %}">Log in</a>
+  <a class="btn btn-outline-secondary btn-lg" href="{% url 'accounts:register' %}">Create an account</a>
+</div>
+{% endblock %}
