@@ -4,6 +4,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Count
 from django.shortcuts import redirect, render
 
+from pipeline.models import Inmate, ProgressRecord
+
 from .decorators import role_required
 from .forms import LoginForm, ProfileForm, RegisterForm
 from .models import User
@@ -67,6 +69,8 @@ def admin_dashboard(request):
         'admin_count': counts.get(User.Role.ADMIN, 0),
         'staff_count': counts.get(User.Role.STAFF, 0),
         'reviewer_count': counts.get(User.Role.REVIEWER, 0),
+        'inmate_count': Inmate.objects.count(),
+        'record_count': ProgressRecord.objects.count(),
         'recent_users': User.objects.order_by('-date_joined')[:5],
     }
     return render(request, 'accounts/admin_dashboard.html', context)
@@ -74,12 +78,27 @@ def admin_dashboard(request):
 
 @role_required(User.Role.STAFF)
 def staff_dashboard(request):
-    return render(request, 'accounts/staff_dashboard.html')
+    mine = Inmate.objects.filter(created_by=request.user)
+    records = ProgressRecord.objects.filter(inmate__created_by=request.user)
+    context = {
+        'my_inmates': mine.count(),
+        'my_records': records.count(),
+        'completed_stages': records.filter(status=ProgressRecord.Status.COMPLETED).count(),
+        'recent_inmates': mine.order_by('-created_at')[:5],
+    }
+    return render(request, 'accounts/staff_dashboard.html', context)
 
 
 @role_required(User.Role.REVIEWER)
 def reviewer_dashboard(request):
-    return render(request, 'accounts/reviewer_dashboard.html')
+    context = {
+        'inmate_count': Inmate.objects.count(),
+        'completed_stages': ProgressRecord.objects.filter(
+            status=ProgressRecord.Status.COMPLETED
+        ).count(),
+        'recent_inmates': Inmate.objects.select_related('created_by').order_by('-created_at')[:5],
+    }
+    return render(request, 'accounts/reviewer_dashboard.html', context)
 
 
 @login_required
