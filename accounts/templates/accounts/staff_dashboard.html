@@ -2,10 +2,29 @@
 {% block title %}Staff Dashboard{% endblock %}
 {% block content %}
 <h2 class="mb-1">Staff Dashboard</h2>
-<p class="text-muted mb-4">Record and review inmate rehabilitation progress. These modules are built in the next phases.</p>
-<div class="row g-3">
-  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Inmate Profiles</h5><p class="text-muted">Create records and track sentence information.</p><span class="badge bg-secondary">Coming soon</span></div></div></div>
-  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Rehabilitation Pipeline</h5><p class="text-muted">Log the six stages from Assessment to Release Preparation.</p><span class="badge bg-secondary">Coming soon</span></div></div></div>
-  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body"><h5>Behavior Reports</h5><p class="text-muted">File Minor, Moderate, or Major behavior reports.</p><span class="badge bg-secondary">Coming soon</span></div></div></div>
+<p class="text-muted mb-4">Record and review the rehabilitation progress of the inmates you manage.</p>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ my_inmates }}</div><div class="text-muted">My inmates</div></div></div></div>
+  <div class="col-md-4"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ my_records }}</div><div class="text-muted">Stage records</div></div></div></div>
+  <div class="col-md-4"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ completed_stages }}</div><div class="text-muted">Stages completed</div></div></div></div>
+</div>
+<div class="mb-3">
+  <a class="btn btn-sc" href="{% url 'pipeline:inmate_create' %}">Add inmate</a>
+  <a class="btn btn-outline-secondary" href="{% url 'pipeline:inmate_list' %}">View my inmates</a>
+</div>
+<div class="card shadow-sm">
+  <div class="card-header card-header-sc">Recently added</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Inmate no.</th><th>Name</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for inmate in recent_inmates %}
+          <tr><td>{{ inmate.inmate_number }}</td><td>{{ inmate.full_name }}</td><td>{{ inmate.get_status_display }}</td><td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{{ inmate.get_absolute_url }}">Open</a></td></tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-center text-muted py-3">You have not added any inmates yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

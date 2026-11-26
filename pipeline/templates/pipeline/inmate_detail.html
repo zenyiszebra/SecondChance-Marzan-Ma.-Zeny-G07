@@ -11,7 +11,8 @@
     {% endif %}
   </div>
 </div>
-<div class="card shadow-sm">
+
+<div class="card shadow-sm mb-4">
   <div class="card-body">
     <dl class="row mb-0">
       <dt class="col-sm-3">Inmate no.</dt><dd class="col-sm-9">{{ inmate.inmate_number }}</dd>
@@ -22,5 +23,37 @@
       <dt class="col-sm-3">Added by</dt><dd class="col-sm-9">{{ inmate.created_by.username }} on {{ inmate.created_at|date:"M d, Y" }}</dd>
     </dl>
   </div>
+</div>
+
+<h4 class="mb-2">Rehabilitation pipeline</h4>
+<p class="text-muted">{{ done_count }} of {{ stage_count }} stages completed ({{ inmate.progress_percent }}%).</p>
+<div class="progress mb-4" style="height:14px">
+  <div class="progress-bar sc-bar bg-success" data-width="{{ inmate.progress_percent }}" style="width: {{ inmate.progress_percent }}%"></div>
+</div>
+
+<div class="row g-3">
+  {% for s in stages %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h6 class="mb-2">{{ forloop.counter }}. {{ s.label }}</h6>
+          {% if s.record %}
+            <span class="badge {% if s.record.status == 'completed' %}bg-success{% elif s.record.status == 'in_progress' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ s.record.get_status_display }}</span>
+            <p class="small mt-2 mb-1">Hours: {{ s.record.hours_completed }}</p>
+            {% if s.record.completed_on %}<p class="small mb-1">Completed: {{ s.record.completed_on|date:"M d, Y" }}</p>{% endif %}
+            {% if s.record.remarks %}<p class="small text-muted mb-1">{{ s.record.remarks }}</p>{% endif %}
+            <p class="small text-muted mb-2">Recorded by {{ s.record.recorded_by.username }}</p>
+            {% if can_edit %}
+              <a class="btn btn-sm btn-outline-secondary" href="{% url 'pipeline:progress_edit' s.record.pk %}">Edit</a>
+              <a class="btn btn-sm btn-outline-danger" href="{% url 'pipeline:progress_delete' s.record.pk %}">Delete</a>
+            {% endif %}
+          {% else %}
+            <p class="text-muted small">Not recorded yet.</p>
+            {% if can_edit %}<a class="btn btn-sm btn-sc" href="{% url 'pipeline:progress_create' inmate.pk %}?stage={{ s.value }}">Record stage</a>{% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 {% endblock %}

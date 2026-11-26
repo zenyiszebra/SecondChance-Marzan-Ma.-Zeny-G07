@@ -1,28 +1,47 @@
 # SecondChance: Breaking Beyond the Bars
 
 A rehabilitation progress tracking system. Correctional staff record each inmate's progress
-through six rehabilitation stages, and the system calculates a measurable Readiness Score for
-release-preparation decisions.
+through six rehabilitation stages, and the system turns it into a measurable Readiness Score
+for release-preparation decisions.
 
-**Phase 1 (this repo so far): Account Feature** built with full-stack Django and PostgreSQL.
+Built with full-stack Django (templates), PostgreSQL on Supabase, and Bootstrap 5.
 
-## Tech stack
-- Django 5.2 (backend and frontend through Django templates, Bootstrap 5 from a CDN)
-- PostgreSQL (hosted on Supabase, or any local PostgreSQL). SQLite is not used.
-- Pillow for profile photos, python-dotenv and dj-database-url for configuration
+## Core feature (Project Development 2): Rehabilitation Pipeline
 
-## Account Feature
-| Part | Where |
+The pipeline is the main thing SecondChance exists to do. It works end to end through the
+database, the Django backend, and the templates.
+
+**What users can do**
+- **Inmate records:** add, view, search, edit, and delete inmate records (inmate number, name,
+  date of birth, sentence dates, status, notes).
+- **Six-stage pipeline:** for each inmate, record progress on Initial Assessment, Education,
+  Skills Training, Counseling, Work Program, and Release Preparation (status, hours, completion
+  date, remarks). Each inmate page shows the six stages and a completion progress bar.
+
+**Validation and business rules**
+- Inmate number must be unique. Date of birth must be in the past. Sentence end must be after
+  sentence start.
+- One record per stage per inmate. A completed stage needs a completion date that is not in the
+  future and not before the sentence start. Only completed stages can have a completion date.
+- Clear success and error messages on every form.
+
+**Data and relationships (PostgreSQL / Supabase)**
+- `Inmate.created_by` is a ForeignKey to the user who added the inmate.
+- `ProgressRecord.inmate` is a ForeignKey to `Inmate`, and `ProgressRecord.recorded_by` is a
+  ForeignKey to the user who recorded the stage.
+
+**Roles**
+| Role | Access |
 |---|---|
-| Registration (validation, unique username/email, password confirmation, hashed passwords) | `accounts/forms.py` `RegisterForm`, `accounts/views.py` `register_view` |
-| Login / logout, invalid-credential error, protected pages | `UserLoginView`, `UserLogoutView`, `@login_required`, `role_required` |
-| Role-based dashboards (Admin, Staff, Reviewer) | `accounts/views.py`, `accounts/decorators.py`, `accounts/templates/accounts/*_dashboard.html` |
-| User profile (view and edit own profile, photo upload) | `profile_view`, `profile_edit`, `ProfileForm` |
+| Staff | Create, view, edit, and delete only their own inmates and stage records |
+| Admin | View and manage all inmates and stage records |
+| Reviewer | Read-only access to all inmates and stage records |
 
-**Roles.** Users register as *Staff* or *Reviewer*. *Admin* accounts are made with
-`python manage.py createsuperuser`, which sets the Admin role automatically, so nobody can
-register themselves as an admin. A user who opens another role's dashboard URL is sent back to
-their own dashboard with an error message.
+Each role's dashboard shows the pipeline: staff see their own counts and recent inmates,
+admins see system-wide totals, reviewers see a read-only summary.
+
+## Standard features (Project Development 1)
+Registration, login/logout, role-based dashboards, and user profile all still work.
 
 ## Setup
 ```bash
@@ -33,30 +52,20 @@ venv\Scripts\activate          # Windows   (macOS/Linux: source venv/bin/activat
 pip install -r requirements.txt
 copy .env.example .env         # macOS/Linux: cp .env.example .env
 ```
-Edit `.env`: set `DJANGO_SECRET_KEY` and `DATABASE_URL`.
-
-**Supabase:** create a project, click **Connect**, copy the **Session pooler** connection string,
-paste it as `DATABASE_URL` and keep `?sslmode=require`. URL-encode special characters in the
-password. For local PostgreSQL, use `postgresql://user:password@localhost:5432/secondchance`.
+Edit `.env`: set `DJANGO_SECRET_KEY` and `DATABASE_URL` (Supabase Session pooler string or a local
+PostgreSQL URL).
 
 ```bash
-python manage.py makemigrations accounts
 python manage.py migrate
-python manage.py createsuperuser      # this account becomes the Admin
+python manage.py createsuperuser      # becomes the Admin account
 python manage.py runserver
 ```
-Open http://127.0.0.1:8000/
+Open http://127.0.0.1:8000/. Run the tests with `python manage.py test accounts pipeline`
+(the database user needs permission to create a test database).
 
-## Tests
-```bash
-python manage.py test accounts
-```
-Django creates a temporary `test_...` database, so the database user needs permission to create
-databases (works with local PostgreSQL; if Supabase refuses, run the tests against local PostgreSQL).
-
-## Pages
-`/` home, `/register/`, `/login/`, `/logout/` (POST), `/dashboard/` (role redirect),
-`/dashboard/admin/`, `/dashboard/staff/`, `/dashboard/reviewer/`, `/profile/`, `/profile/edit/`
+## Main pages
+`/` home, `/register/`, `/login/`, `/dashboard/` (role redirect), `/profile/`,
+`/pipeline/` (inmate list), `/pipeline/inmates/new/`, `/pipeline/inmates/<id>/`
 
 ## Secrets
 `.env`, `venv/`, and `__pycache__/` are in `.gitignore`. Only `.env.example` is committed.

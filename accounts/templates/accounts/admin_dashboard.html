@@ -4,15 +4,17 @@
 <h2 class="mb-4">Admin Dashboard</h2>
 <div class="row g-3 mb-4">
   <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ total_users }}</div><div class="text-muted">Total users</div></div></div></div>
-  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ admin_count }}</div><div class="text-muted">Admins</div></div></div></div>
   <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ staff_count }}</div><div class="text-muted">Staff</div></div></div></div>
-  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ reviewer_count }}</div><div class="text-muted">Reviewers</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ inmate_count }}</div><div class="text-muted">Inmate records</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card text-center shadow-sm"><div class="card-body"><div class="fs-2 fw-bold">{{ record_count }}</div><div class="text-muted">Stage records</div></div></div></div>
+</div>
+<p class="text-muted">Admins: {{ admin_count }} &middot; Reviewers: {{ reviewer_count }}</p>
+<div class="mb-3">
+  <a class="btn btn-sc" href="{% url 'pipeline:inmate_list' %}">View all inmates</a>
+  <a class="btn btn-outline-secondary" href="{% url 'admin:accounts_user_changelist' %}">Manage users</a>
 </div>
 <div class="card shadow-sm">
-  <div class="card-header card-header-sc d-flex justify-content-between align-items-center">
-    <span>Recent registrations</span>
-    <a class="btn btn-sm btn-sc" href="{% url 'admin:accounts_user_changelist' %}">Manage users</a>
-  </div>
+  <div class="card-header card-header-sc">Recent registrations</div>
   <div class="table-responsive">
     <table class="table mb-0">
       <thead><tr><th>Username</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
