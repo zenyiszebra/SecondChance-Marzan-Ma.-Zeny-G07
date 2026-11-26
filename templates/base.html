@@ -33,6 +33,7 @@
           {% elif user.role == 'reviewer' %}
             <li class="nav-item"><a class="nav-link" href="{% url 'accounts:reviewer_dashboard' %}">Reviewer Dashboard</a></li>
           {% endif %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'pipeline:inmate_list' %}">Inmates</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'accounts:profile' %}">My Profile</a></li>
         {% endif %}
       </ul>

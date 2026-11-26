@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Delete inmate{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-danger text-white"><h5 class="mb-0">Delete inmate record</h5></div>
+      <div class="card-body">
+        <p>Delete <strong>{{ inmate.full_name }}</strong> ({{ inmate.inmate_number }})? Their stage records will be deleted too. This cannot be undone.</p>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Yes, delete</button>
+          <a class="btn btn-outline-secondary" href="{% url 'pipeline:inmate_detail' inmate.pk %}">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
