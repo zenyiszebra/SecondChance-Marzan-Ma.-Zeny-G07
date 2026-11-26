@@ -15,7 +15,7 @@
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead>
-        <tr><th>Inmate no.</th><th>Name</th><th>Sentence</th><th>Status</th><th>Added by</th><th></th></tr>
+        <tr><th>Inmate no.</th><th>Name</th><th>Sentence</th><th>Status</th><th style="min-width:160px">Pipeline progress</th><th>Added by</th><th></th></tr>
       </thead>
       <tbody>
         {% for inmate in inmates %}
@@ -24,11 +24,17 @@
             <td>{{ inmate.full_name }}</td>
             <td>{{ inmate.sentence_start|date:"M d, Y" }} to {{ inmate.sentence_end|date:"M d, Y" }}</td>
             <td>{{ inmate.get_status_display }}</td>
+            <td>
+              <div class="progress" style="height:10px">
+                <div class="progress-bar sc-bar" data-width="{{ inmate.percent }}" style="width: {{ inmate.percent }}%"></div>
+              </div>
+              <small class="text-muted">{{ inmate.done_count }} of 6 stages</small>
+            </td>
             <td>{{ inmate.created_by.username }}</td>
             <td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{% url 'pipeline:inmate_detail' inmate.pk %}">View</a></td>
           </tr>
         {% empty %}
-          <tr><td colspan="6" class="text-center text-muted py-4">No inmate records found.</td></tr>
+          <tr><td colspan="7" class="text-center text-muted py-4">No inmate records found.</td></tr>
         {% endfor %}
       </tbody>
     </table>
