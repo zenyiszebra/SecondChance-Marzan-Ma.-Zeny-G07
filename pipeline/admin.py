@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Inmate
+from .models import Inmate, ProgressRecord
 
 
 @admin.register(Inmate)
@@ -8,3 +8,9 @@ class InmateAdmin(admin.ModelAdmin):
     list_display = ('inmate_number', 'last_name', 'first_name', 'status', 'created_by', 'created_at')
     list_filter = ('status',)
     search_fields = ('inmate_number', 'first_name', 'last_name')
+
+
+@admin.register(ProgressRecord)
+class ProgressRecordAdmin(admin.ModelAdmin):
+    list_display = ('inmate', 'stage', 'status', 'hours_completed', 'completed_on', 'recorded_by')
+    list_filter = ('stage', 'status')
