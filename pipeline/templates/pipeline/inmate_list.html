@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Inmate Records{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Inmate Records</h2>
+  {% if can_create %}<a class="btn btn-sc" href="{% url 'pipeline:inmate_create' %}">Add inmate</a>{% endif %}
+</div>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-8 col-md-6">
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search by name or inmate number">
+  </div>
+  <div class="col-auto"><button class="btn btn-outline-secondary" type="submit">Search</button></div>
+</form>
+<div class="card shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr><th>Inmate no.</th><th>Name</th><th>Sentence</th><th>Status</th><th>Added by</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for inmate in inmates %}
+          <tr>
+            <td>{{ inmate.inmate_number }}</td>
+            <td>{{ inmate.full_name }}</td>
+            <td>{{ inmate.sentence_start|date:"M d, Y" }} to {{ inmate.sentence_end|date:"M d, Y" }}</td>
+            <td>{{ inmate.get_status_display }}</td>
+            <td>{{ inmate.created_by.username }}</td>
+            <td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="{% url 'pipeline:inmate_detail' inmate.pk %}">View</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No inmate records found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
